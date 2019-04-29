@@ -3,15 +3,21 @@ package main
 import (
 	"github.com/pineal-niwan/busybox/binary"
 	"github.com/pineal-niwan/busybox/fast_rpc"
-	"github.com/pineal-niwan/inc-server/handler"
+	"github.com/pineal-niwan/inc-server/inc_hash"
 	"github.com/pineal-niwan/inc-server/message"
 	"go.uber.org/zap"
 	"net"
 	"time"
 )
 
-func initServiceHandler(ln net.Listener, logger *zap.Logger) (*fast_rpc.Service, error) {
-	service := &fast_rpc.Service{}
+//递增服务
+type IncService struct {
+	*fast_rpc.Service
+	numIncHash *inc_hash.NumIncHash
+}
+
+//初始化服务
+func initServiceHandler(ln net.Listener, logger *zap.Logger) (*IncService, error) {
 	option := &fast_rpc.Option{
 		Option: &binary.Option{
 			DataMaxLen:      1024 * 1024 * 4, //4M
@@ -33,11 +39,70 @@ func initServiceHandler(ln net.Listener, logger *zap.Logger) (*fast_rpc.Service,
 	if err != nil {
 		return nil, err
 	}
-	service.Init(ln, logger, option, message.InitMsgParseHandlerHash)
+
+	rpcService := &fast_rpc.Service{}
+	rpcService.Init(ln, logger, option, message.InitMsgParseHandlerHash)
+
+	service := &IncService{
+		Service:    rpcService,
+		numIncHash: &inc_hash.NumIncHash{},
+	}
 
 	//add your service handler here
-	service.AddMsgHandler(&message.MsgReqKey{}, handler.HandleKeyInc)
-	service.AddMsgHandler(&message.MsgReqKeyList{}, handler.HandleKeyIncList)
+	service.AddMsgHandler(&message.MsgReqKey{}, service.HandleKeyInc)
+	service.AddMsgHandler(&message.MsgReqKeyList{}, service.HandleKeyIncList)
+	service.numIncHash.Init(service.getIncNumberByKey)
 
 	return service, err
+}
+
+//由单个key获取其对应的id
+func (s *IncService) HandleKeyInc(inMsg fast_rpc.IMsg) (outMsg fast_rpc.IMsg, err error) {
+	req, ok := inMsg.(*message.MsgReqKey)
+	if !ok {
+		err = fast_rpc.ErrNotExpectMsg
+		return
+	}
+	id, fErr := s.handleKeyInc(req.Key)
+
+	rsp := &message.MsgRspId{}
+	if fErr != nil {
+		rsp.Err = fErr.Error()
+	} else {
+		rsp.Id = id
+	}
+	return rsp, nil
+}
+
+//由多个key获取其对应的id
+func (s *IncService) HandleKeyIncList(inMsg fast_rpc.IMsg) (outMsg fast_rpc.IMsg, err error) {
+	req, ok := inMsg.(*message.MsgReqKeyList)
+	if !ok {
+		err = fast_rpc.ErrNotExpectMsg
+		return
+	}
+
+	keyIdPairList := make([]message.KeyIdPair, 0, len(req.KeyList))
+	var rspErr string
+	for _, key := range req.KeyList {
+		id, fErr := s.handleKeyInc(key)
+		if fErr != nil {
+			rspErr = fErr.Error()
+		} else {
+			keyIdPairList = append(keyIdPairList, message.KeyIdPair{
+				Id:  id,
+				Key: key,
+			})
+		}
+	}
+
+	rsp := &message.MsgRspKeyIdPairList{}
+	rsp.Err = rspErr
+	rsp.KeyIdPairList = keyIdPairList
+	return rsp, nil
+	return
+}
+
+func (s *IncService) handleKeyInc(key string) (number uint32, err error) {
+	return s.numIncHash.Get(key)
 }
