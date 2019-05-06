@@ -17,7 +17,8 @@ type IncService struct {
 }
 
 //初始化服务
-func initServiceHandler(ln net.Listener, logger *zap.Logger) (*IncService, error) {
+func initServiceHandler(
+	ln net.Listener, logger *zap.Logger, keyFunc inc_hash.GetNumByKeyFromStoreFunc) (*IncService, error) {
 	option := &fast_rpc.Option{
 		Option: &binary.Option{
 			DataMaxLen:      1024 * 1024 * 4, //4M
@@ -52,7 +53,7 @@ func initServiceHandler(ln net.Listener, logger *zap.Logger) (*IncService, error
 	service.AddMsgHandler(&message.MsgReqKey{}, service.HandleKeyInc)
 	service.AddMsgHandler(&message.MsgReqKeyWithIncNum{}, service.HandleKeyIncWithStep)
 	service.AddMsgHandler(&message.MsgReqKeyList{}, service.HandleKeyIncList)
-	service.numIncHash.Init(service.getIncNumberByKey)
+	service.numIncHash.Init(keyFunc)
 
 	return service, err
 }

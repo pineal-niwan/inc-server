@@ -20,7 +20,7 @@ func main() {
 	defer logger.Sync()
 
 	appRun := func(c *cli.Context) error {
-		return serverRun(c, logger)
+		return ServerRun(c, logger, getIncNumberByKey)
 	}
 
 	app := cli.App{

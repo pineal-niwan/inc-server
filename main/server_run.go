@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"github.com/pineal-niwan/busybox/util"
+	"github.com/pineal-niwan/inc-server/inc_hash"
 	"github.com/urfave/cli"
 	"go.uber.org/zap"
 	"net"
@@ -15,7 +16,7 @@ var (
 )
 
 //server_run
-func serverRun(c *cli.Context, logger *zap.Logger) error {
+func ServerRun(c *cli.Context, logger *zap.Logger, keyFunc inc_hash.GetNumByKeyFromStoreFunc) error {
 	//参数检查
 	address := c.String("address")
 	pprofAddress := c.String("pprofAddress")
@@ -32,7 +33,7 @@ func serverRun(c *cli.Context, logger *zap.Logger) error {
 	//rpc notify chan
 	rpcNotify := make(chan struct{})
 	//启动rpc服务
-	service, err := initServiceHandler(ln, logger)
+	service, err := initServiceHandler(ln, logger, keyFunc)
 	if err != nil {
 		//关闭连接
 		ln.Close()
