@@ -134,6 +134,132 @@ func (msg *MsgRspId) Unmarshal(buf []byte, option *binary.Option) error {
 	return err
 }
 
+//获取递增-带增加的数字
+type MsgReqKeyWithIncNum struct {
+	ReqKeyWithIncNum
+}
+
+//获取命令行
+func (msg *MsgReqKeyWithIncNum) GetCmd() uint16 {
+	return uint16(3)
+}
+
+//获取版本号
+func (msg *MsgReqKeyWithIncNum) GetVersion() uint16 {
+	return uint16(0)
+}
+
+//获取Code
+func (msg *MsgReqKeyWithIncNum) GetCode() uint32 {
+	return uint32(3) | (uint32(0) << 16)
+}
+
+//序列化
+func (msg *MsgReqKeyWithIncNum) Marshal(buf []byte, option *binary.Option) (int, []byte, error) {
+	writer, err := NewWriteIncHandlerWithOption(buf, option)
+	if err != nil {
+		return 0, nil, err
+	}
+	//先跳过消息头
+	err = writer.MovePos(uint32(fast_rpc.MsgHeadSize))
+	if err != nil {
+		return 0, nil, err
+	}
+	//写消息内容
+	err = writer.WriteReqKeyWithIncNum(msg.ReqKeyWithIncNum)
+	if err != nil {
+		return 0, nil, err
+	}
+	size := writer.ResetPos(0)
+	//回填消息头
+	contentSize := uint32(size - fast_rpc.MsgHeadSize)
+	err = fast_rpc.MarshalMsgHead(writer.BinaryHandler,
+		fast_rpc.MsgHead{
+			Size:    contentSize,
+			Cmd:     uint16(3),
+			Version: uint16(0),
+		})
+	if err != nil {
+		return 0, nil, err
+	}
+	writer.ResetPos(size)
+	return size, writer.Data(), err
+}
+
+//反序列化
+func (msg *MsgReqKeyWithIncNum) Unmarshal(buf []byte, option *binary.Option) error {
+	reader, err := NewReadIncHandlerWithOption(buf, option)
+	if err != nil {
+		return err
+	}
+	//读消息内容
+	msg.ReqKeyWithIncNum, err = reader.ReadReqKeyWithIncNum()
+	return err
+}
+
+//返回递增的值
+type MsgRspIdWithIncNum struct {
+	RspIdWithIncNum
+}
+
+//获取命令行
+func (msg *MsgRspIdWithIncNum) GetCmd() uint16 {
+	return uint16(4)
+}
+
+//获取版本号
+func (msg *MsgRspIdWithIncNum) GetVersion() uint16 {
+	return uint16(0)
+}
+
+//获取Code
+func (msg *MsgRspIdWithIncNum) GetCode() uint32 {
+	return uint32(4) | (uint32(0) << 16)
+}
+
+//序列化
+func (msg *MsgRspIdWithIncNum) Marshal(buf []byte, option *binary.Option) (int, []byte, error) {
+	writer, err := NewWriteIncHandlerWithOption(buf, option)
+	if err != nil {
+		return 0, nil, err
+	}
+	//先跳过消息头
+	err = writer.MovePos(uint32(fast_rpc.MsgHeadSize))
+	if err != nil {
+		return 0, nil, err
+	}
+	//写消息内容
+	err = writer.WriteRspIdWithIncNum(msg.RspIdWithIncNum)
+	if err != nil {
+		return 0, nil, err
+	}
+	size := writer.ResetPos(0)
+	//回填消息头
+	contentSize := uint32(size - fast_rpc.MsgHeadSize)
+	err = fast_rpc.MarshalMsgHead(writer.BinaryHandler,
+		fast_rpc.MsgHead{
+			Size:    contentSize,
+			Cmd:     uint16(4),
+			Version: uint16(0),
+		})
+	if err != nil {
+		return 0, nil, err
+	}
+	writer.ResetPos(size)
+	return size, writer.Data(), err
+}
+
+//反序列化
+func (msg *MsgRspIdWithIncNum) Unmarshal(buf []byte, option *binary.Option) error {
+	reader, err := NewReadIncHandlerWithOption(buf, option)
+	if err != nil {
+		return err
+	}
+	//读消息内容
+	msg.RspIdWithIncNum, err = reader.ReadRspIdWithIncNum()
+	return err
+}
+
 //获取递增列表
 type MsgReqKeyList struct {
 	ReqKeyList
@@ -141,7 +267,7 @@ type MsgReqKeyList struct {
 
 //获取命令行
 func (msg *MsgReqKeyList) GetCmd() uint16 {
-	return uint16(3)
+	return uint16(5)
 }
 
 //获取版本号
@@ -151,7 +277,7 @@ func (msg *MsgReqKeyList) GetVersion() uint16 {
 
 //获取Code
 func (msg *MsgReqKeyList) GetCode() uint32 {
-	return uint32(3) | (uint32(0) << 16)
+	return uint32(5) | (uint32(0) << 16)
 }
 
 //序列化
@@ -176,7 +302,7 @@ func (msg *MsgReqKeyList) Marshal(buf []byte, option *binary.Option) (int, []byt
 	err = fast_rpc.MarshalMsgHead(writer.BinaryHandler,
 		fast_rpc.MsgHead{
 			Size:    contentSize,
-			Cmd:     uint16(3),
+			Cmd:     uint16(5),
 			Version: uint16(0),
 		})
 	if err != nil {
@@ -204,7 +330,7 @@ type MsgRspKeyIdPairList struct {
 
 //获取命令行
 func (msg *MsgRspKeyIdPairList) GetCmd() uint16 {
-	return uint16(4)
+	return uint16(6)
 }
 
 //获取版本号
@@ -214,7 +340,7 @@ func (msg *MsgRspKeyIdPairList) GetVersion() uint16 {
 
 //获取Code
 func (msg *MsgRspKeyIdPairList) GetCode() uint32 {
-	return uint32(4) | (uint32(0) << 16)
+	return uint32(6) | (uint32(0) << 16)
 }
 
 //序列化
@@ -239,7 +365,7 @@ func (msg *MsgRspKeyIdPairList) Marshal(buf []byte, option *binary.Option) (int,
 	err = fast_rpc.MarshalMsgHead(writer.BinaryHandler,
 		fast_rpc.MsgHead{
 			Size:    contentSize,
-			Cmd:     uint16(4),
+			Cmd:     uint16(6),
 			Version: uint16(0),
 		})
 	if err != nil {

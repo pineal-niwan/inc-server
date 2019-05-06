@@ -25,12 +25,12 @@ type NumWithLock struct {
 	beSet bool
 }
 
-//递增操作--如果当前没有被设置，就去介质中获取
-func (nL *NumWithLock) Inc(f GetNumFromStoreFunc) (uint32, error) {
+//指定步长的递增操作--如果当前没有被设置，就去介质中获取
+func (nL *NumWithLock) IncWithStep(f GetNumFromStoreFunc, step uint32) (uint32, error) {
 	nL.Lock()
 	if nL.beSet {
 		//值已经被初始化过了，可以直接加
-		nL.num++
+		nL.num += step
 		num := nL.num
 		nL.Unlock()
 		return num, nil
@@ -43,7 +43,7 @@ func (nL *NumWithLock) Inc(f GetNumFromStoreFunc) (uint32, error) {
 			return 0, err
 		} else {
 			//获取成功，设置值被初始化的标记位
-			num++
+			num += step
 			nL.num = num
 			nL.beSet = true
 			nL.Unlock()
@@ -63,7 +63,7 @@ func (nH *NumIncHash) Init(f GetNumByKeyFromStoreFunc) {
 	nH.getNumFunc.Store(f)
 }
 
-func (nH *NumIncHash) Get(key string) (uint32, error) {
+func (nH *NumIncHash) Get(key string, step uint32) (uint32, error) {
 	//拿到num的指针，如果拿不到，就新设定一个
 	numPtr := &NumWithLock{}
 	actualPtr, _ := nH.numHash.LoadOrStore(key, numPtr)
@@ -77,6 +77,6 @@ func (nH *NumIncHash) Get(key string) (uint32, error) {
 			return fFunc(key)
 		}
 	}
-	return newNumPtr.Inc(f)
+	return newNumPtr.IncWithStep(f, step)
 
 }

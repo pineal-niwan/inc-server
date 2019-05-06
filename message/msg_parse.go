@@ -30,15 +30,29 @@ func init() {
 		err := msg.Unmarshal(data, option)
 		return msg, err
 	}
-	//生成ReqKeyList解析函数 command:3 version:0
+	//生成ReqKeyWithIncNum解析函数 command:3 version:0
 	key = uint32(3) | (uint32(0) << 16)
+	InitMsgParseHandlerHash[key] = func(data []byte, option *binary.Option) (fast_rpc.IMsg, error) {
+		msg := &MsgReqKeyWithIncNum{}
+		err := msg.Unmarshal(data, option)
+		return msg, err
+	}
+	//生成RspIdWithIncNum解析函数 command:4 version:0
+	key = uint32(4) | (uint32(0) << 16)
+	InitMsgParseHandlerHash[key] = func(data []byte, option *binary.Option) (fast_rpc.IMsg, error) {
+		msg := &MsgRspIdWithIncNum{}
+		err := msg.Unmarshal(data, option)
+		return msg, err
+	}
+	//生成ReqKeyList解析函数 command:5 version:0
+	key = uint32(5) | (uint32(0) << 16)
 	InitMsgParseHandlerHash[key] = func(data []byte, option *binary.Option) (fast_rpc.IMsg, error) {
 		msg := &MsgReqKeyList{}
 		err := msg.Unmarshal(data, option)
 		return msg, err
 	}
-	//生成RspKeyIdPairList解析函数 command:4 version:0
-	key = uint32(4) | (uint32(0) << 16)
+	//生成RspKeyIdPairList解析函数 command:6 version:0
+	key = uint32(6) | (uint32(0) << 16)
 	InitMsgParseHandlerHash[key] = func(data []byte, option *binary.Option) (fast_rpc.IMsg, error) {
 		msg := &MsgRspKeyIdPairList{}
 		err := msg.Unmarshal(data, option)

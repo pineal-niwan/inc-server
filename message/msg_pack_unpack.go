@@ -169,6 +169,154 @@ func (p *IncHandler) WriteRspIdArray(v []RspId) (err error) {
 	return
 }
 
+//读取ReqKeyWithIncNum
+func (p *IncHandler) ReadReqKeyWithIncNum() (ret ReqKeyWithIncNum, err error) {
+	ret.Key, err = p.ReadString()
+	if err != nil {
+		return
+	}
+	ret.IncNum, err = p.ReadUint32()
+	if err != nil {
+		return
+	}
+	return
+}
+
+//写入ReqKeyWithIncNum
+func (p *IncHandler) WriteReqKeyWithIncNum(v ReqKeyWithIncNum) (err error) {
+	err = p.WriteString(v.Key)
+	if err != nil {
+		return
+	}
+	err = p.WriteUint32(v.IncNum)
+	if err != nil {
+		return
+	}
+	return
+}
+
+//读取ReqKeyWithIncNum数组
+func (p *IncHandler) ReadReqKeyWithIncNumArray() (ret []ReqKeyWithIncNum, err error) {
+	var size uint32
+
+	//读长度
+	size, err = p.ReadArrayLen()
+	if err != nil {
+		return
+	}
+	//读内容
+	ret = make([]ReqKeyWithIncNum, size)
+	for i := uint32(0); i < size; i++ {
+		ret[i], err = p.ReadReqKeyWithIncNum()
+		if err != nil {
+			return
+		}
+	}
+	return
+}
+
+//写入ReqKeyWithIncNum数组
+func (p *IncHandler) WriteReqKeyWithIncNumArray(v []ReqKeyWithIncNum) (err error) {
+	//写长度
+	var size int
+	if v == nil {
+		size = 0
+	} else {
+		size = len(v)
+	}
+	err = p.WriteArrayLen(size)
+	if err != nil {
+		return
+	}
+
+	//写内容
+	for i := 0; i < size; i++ {
+		err = p.WriteReqKeyWithIncNum(v[i])
+		if err != nil {
+			return
+		}
+	}
+	return
+}
+
+//读取RspIdWithIncNum
+func (p *IncHandler) ReadRspIdWithIncNum() (ret RspIdWithIncNum, err error) {
+	ret.Id, err = p.ReadUint32()
+	if err != nil {
+		return
+	}
+	ret.IncNum, err = p.ReadUint32()
+	if err != nil {
+		return
+	}
+	ret.Err, err = p.ReadString()
+	if err != nil {
+		return
+	}
+	return
+}
+
+//写入RspIdWithIncNum
+func (p *IncHandler) WriteRspIdWithIncNum(v RspIdWithIncNum) (err error) {
+	err = p.WriteUint32(v.Id)
+	if err != nil {
+		return
+	}
+	err = p.WriteUint32(v.IncNum)
+	if err != nil {
+		return
+	}
+	err = p.WriteString(v.Err)
+	if err != nil {
+		return
+	}
+	return
+}
+
+//读取RspIdWithIncNum数组
+func (p *IncHandler) ReadRspIdWithIncNumArray() (ret []RspIdWithIncNum, err error) {
+	var size uint32
+
+	//读长度
+	size, err = p.ReadArrayLen()
+	if err != nil {
+		return
+	}
+	//读内容
+	ret = make([]RspIdWithIncNum, size)
+	for i := uint32(0); i < size; i++ {
+		ret[i], err = p.ReadRspIdWithIncNum()
+		if err != nil {
+			return
+		}
+	}
+	return
+}
+
+//写入RspIdWithIncNum数组
+func (p *IncHandler) WriteRspIdWithIncNumArray(v []RspIdWithIncNum) (err error) {
+	//写长度
+	var size int
+	if v == nil {
+		size = 0
+	} else {
+		size = len(v)
+	}
+	err = p.WriteArrayLen(size)
+	if err != nil {
+		return
+	}
+
+	//写内容
+	for i := 0; i < size; i++ {
+		err = p.WriteRspIdWithIncNum(v[i])
+		if err != nil {
+			return
+		}
+	}
+	return
+}
+
 //读取ReqKeyList
 func (p *IncHandler) ReadReqKeyList() (ret ReqKeyList, err error) {
 	ret.KeyList, err = p.ReadStringArray()

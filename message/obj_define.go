@@ -18,6 +18,24 @@ type RspId struct {
 	Err string
 }
 
+//获取递增-带增加的数字
+type ReqKeyWithIncNum struct {
+	//获取递增
+	Key string
+	//递增的步长
+	IncNum uint32
+}
+
+//返回递增的值
+type RspIdWithIncNum struct {
+	//返回递增
+	Id uint32
+	//递增的步长
+	IncNum uint32
+	//获取过程是否有err,如果有,则此字符串表示error内容
+	Err string
+}
+
 //获取递增列表
 type ReqKeyList struct {
 	//获取递增列表

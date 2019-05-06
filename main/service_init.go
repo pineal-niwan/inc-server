@@ -50,6 +50,7 @@ func initServiceHandler(ln net.Listener, logger *zap.Logger) (*IncService, error
 
 	//add your service handler here
 	service.AddMsgHandler(&message.MsgReqKey{}, service.HandleKeyInc)
+	service.AddMsgHandler(&message.MsgReqKeyWithIncNum{}, service.HandleKeyIncWithStep)
 	service.AddMsgHandler(&message.MsgReqKeyList{}, service.HandleKeyIncList)
 	service.numIncHash.Init(service.getIncNumberByKey)
 
@@ -63,13 +64,32 @@ func (s *IncService) HandleKeyInc(inMsg fast_rpc.IMsg) (outMsg fast_rpc.IMsg, er
 		err = fast_rpc.ErrNotExpectMsg
 		return
 	}
-	id, fErr := s.handleKeyInc(req.Key)
+	id, fErr := s.handleKeyInc(req.Key, 1)
 
 	rsp := &message.MsgRspId{}
 	if fErr != nil {
 		rsp.Err = fErr.Error()
 	} else {
 		rsp.Id = id
+	}
+	return rsp, nil
+}
+
+//由单个key以及指定的步长获取其对应的id
+func (s *IncService) HandleKeyIncWithStep(inMsg fast_rpc.IMsg) (outMsg fast_rpc.IMsg, err error) {
+	req, ok := inMsg.(*message.MsgReqKeyWithIncNum)
+	if !ok {
+		err = fast_rpc.ErrNotExpectMsg
+		return
+	}
+	id, fErr := s.handleKeyInc(req.Key, req.IncNum)
+
+	rsp := &message.MsgRspIdWithIncNum{}
+	if fErr != nil {
+		rsp.Err = fErr.Error()
+	} else {
+		rsp.Id = id
+		rsp.IncNum = req.IncNum
 	}
 	return rsp, nil
 }
@@ -85,7 +105,7 @@ func (s *IncService) HandleKeyIncList(inMsg fast_rpc.IMsg) (outMsg fast_rpc.IMsg
 	keyIdPairList := make([]message.KeyIdPair, 0, len(req.KeyList))
 	var rspErr string
 	for _, key := range req.KeyList {
-		id, fErr := s.handleKeyInc(key)
+		id, fErr := s.handleKeyInc(key, 1)
 		if fErr != nil {
 			rspErr = fErr.Error()
 		} else {
@@ -103,6 +123,6 @@ func (s *IncService) HandleKeyIncList(inMsg fast_rpc.IMsg) (outMsg fast_rpc.IMsg
 	return
 }
 
-func (s *IncService) handleKeyInc(key string) (number uint32, err error) {
-	return s.numIncHash.Get(key)
+func (s *IncService) handleKeyInc(key string, step uint32) (number uint32, err error) {
+	return s.numIncHash.Get(key, step)
 }

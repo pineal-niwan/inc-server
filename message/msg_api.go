@@ -33,6 +33,31 @@ func GetIncNumberByKey(
 	return &output.RspId, nil
 }
 
+//传入key和递增的步长，获取递增数字
+func GetIncNumberByKeyWithIncStep(
+	ctx context.Context,
+	cli *fast_rpc.Cli,
+	input ReqKeyWithIncNum,
+	retryTimes int) (*ReqKeyWithIncNum, error) {
+
+	//调用RPC - 发送消息后接收消息
+	outMsg, err := cli.CallWithRetry(
+		ctx,
+		&MsgReqKeyWithIncNum{
+			ReqKeyWithIncNum: input,
+		},
+		retryTimes)
+	if err != nil {
+		return nil, err
+	}
+	//检查是否是期望的消息
+	output, ok := outMsg.(*MsgReqKeyWithIncNum)
+	if !ok {
+		return nil, fast_rpc.ErrNotExpectMsg
+	}
+	return &output.ReqKeyWithIncNum, nil
+}
+
 //传入一组key，获取一组对应的递增数字
 func GetIncNumberListByKeyList(
 	ctx context.Context,
