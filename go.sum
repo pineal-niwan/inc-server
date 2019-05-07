@@ -3,6 +3,8 @@ github.com/go-errors/errors v1.0.1/go.mod h1:f4zRHt4oKfwPJE5k8C9vpYG+aDHdBFUsgrm
 github.com/go-yaml/yaml v2.1.0+incompatible/go.mod h1:w2MrLa16VYP0jy6N7M5kHaCkaLENm+P+Tv+MfurjSw0=
 github.com/pineal-niwan/busybox v0.0.1 h1:RvoQX+eJznOBL874pZnXUGRbBJbxN980EtQE7rx01TM=
 github.com/pineal-niwan/busybox v0.0.1/go.mod h1:HRbDR8fAhLhv/p9WjWUeJYwy08IU4/fhBP1MU6jMgJQ=
+github.com/pineal-niwan/busybox v0.0.3 h1:6n0+RmKiQmiObM5W7uxXMX1NxDzets4P8bXOiltBZ7w=
+github.com/pineal-niwan/busybox v0.0.3/go.mod h1:HRbDR8fAhLhv/p9WjWUeJYwy08IU4/fhBP1MU6jMgJQ=
 github.com/spf13/cobra v0.0.3/go.mod h1:1l0Ry5zgKvJasoi3XT1TypsSe7PqH0Sj9dhYf7v3XqQ=
 github.com/uber-go/zap v1.9.1/go.mod h1:GY+83l3yxBcBw2kmHu/sAWwItnTn+ynxHCRo+WiIQOY=
 github.com/urfave/cli v1.19.1 h1:0mKm4ZoB74PxYmZVua162y1dGt1qc10MyymYRBf3lb8=
