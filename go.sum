@@ -5,6 +5,7 @@ github.com/pineal-niwan/busybox v0.0.1 h1:RvoQX+eJznOBL874pZnXUGRbBJbxN980EtQE7r
 github.com/pineal-niwan/busybox v0.0.1/go.mod h1:HRbDR8fAhLhv/p9WjWUeJYwy08IU4/fhBP1MU6jMgJQ=
 github.com/pineal-niwan/busybox v0.0.3 h1:6n0+RmKiQmiObM5W7uxXMX1NxDzets4P8bXOiltBZ7w=
 github.com/pineal-niwan/busybox v0.0.3/go.mod h1:HRbDR8fAhLhv/p9WjWUeJYwy08IU4/fhBP1MU6jMgJQ=
+github.com/pineal-niwan/busybox v0.0.4/go.mod h1:HRbDR8fAhLhv/p9WjWUeJYwy08IU4/fhBP1MU6jMgJQ=
 github.com/spf13/cobra v0.0.3/go.mod h1:1l0Ry5zgKvJasoi3XT1TypsSe7PqH0Sj9dhYf7v3XqQ=
 github.com/uber-go/zap v1.9.1/go.mod h1:GY+83l3yxBcBw2kmHu/sAWwItnTn+ynxHCRo+WiIQOY=
 github.com/urfave/cli v1.19.1 h1:0mKm4ZoB74PxYmZVua162y1dGt1qc10MyymYRBf3lb8=
